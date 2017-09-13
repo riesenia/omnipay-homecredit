@@ -21,18 +21,19 @@ class PurchaseRequestTest extends TestCase
                 'billingName' => 'Pavel Konečný',
                 'email' => 'nas.zakaznik@nekde.cz',
                 'phone' => '606123456'
-            ]
+            ],
+            'lang' => 'sk',
+            'test' => true
         ]);
     }
 
     public function testGetData()
     {
+        $this->assertSame('https://i-shopsk-train.homecredit.net/ishop/entry.do', $this->request->getEndpoint());
+
         $data = $this->request->getData();
 
-        // hash
-        $hash = md5('99932343241511678,80PavelKonečnýstřešní krytinaBalexmetal' . $this->request->getTimestamp() . 'mfrkg/ut73');
-
         $this->assertSame('11678,80', $data['o_price']);
-        $this->assertSame($hash, $data['sh']);
+        $this->assertSame(md5('99932343241511678,80PavelKonečnýstřešní krytinaBalexmetal' . $this->request->getTimestamp() . 'mfrkg/ut73'), $data['sh']);
     }
 }

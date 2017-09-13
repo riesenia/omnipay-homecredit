@@ -242,6 +242,17 @@ class Gateway extends AbstractGateway
     }
 
     /**
+     * Create a calculator request
+     *
+     * @param array $parameters
+     * @return \Omnipay\HomeCredit\Message\CalculatorRequest
+     */
+    public function calculator(array $parameters = [])
+    {
+        return $this->createRequest('\Omnipay\HomeCredit\Message\CalculatorRequest', $parameters);
+    }
+
+    /**
      * Create a purchase request
      *
      * @param array $parameters

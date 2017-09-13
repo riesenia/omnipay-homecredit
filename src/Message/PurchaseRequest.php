@@ -9,6 +9,13 @@ use Omnipay\Common\Message\AbstractRequest;
 class PurchaseRequest extends AbstractRequest
 {
     /**
+     * Endpoint type to build endpoint URL
+     *
+     * @var string
+     */
+    protected $endpointType = 'shop';
+
+    /**
      * Timestamp
      *
      * @var string
@@ -303,17 +310,6 @@ class PurchaseRequest extends AbstractRequest
     }
 
     /**
-     * Create hash
-     *
-     * @param string
-     * @return string
-     */
-    public function createHash($string)
-    {
-        return md5($string . $this->getSecret());
-    }
-
-    /**
      * Send the request with specified data
      *
      * @param mixed
@@ -331,7 +327,7 @@ class PurchaseRequest extends AbstractRequest
      */
     public function getEndpoint()
     {
-        return $this->getApplicationUrl() . '/ishop/entry.do';
+        return $this->getApplicationUrl() . '/i' . $this->endpointType . '/entry.do';
     }
 
     /**
@@ -342,13 +338,24 @@ class PurchaseRequest extends AbstractRequest
     public function getApplicationUrl()
     {
         if ($this->getLang() == 'sk') {
-            return $this->getTest() ? 'https://i-shopsk-train.homecredit.net' : 'https://i-shopsk.homecredit.net';
+            return $this->getTest() ? 'https://i-' . $this->endpointType . 'sk-train.homecredit.net' : 'https://i-' . $this->endpointType . 'sk.homecredit.net';
         }
 
         if ($this->getLang() == 'cz') {
-            return $this->getTest() ? 'https://i-shop-train.homecredit.net' : 'https://i-shop.homecredit.cz';
+            return $this->getTest() ? 'https://i-' . $this->endpointType . '-train.homecredit.net' : 'https://i-' . $this->endpointType . '.homecredit.cz';
         }
 
         throw new \UnexpectedValueException('Unexpected language!');
+    }
+
+    /**
+     * Create hash
+     *
+     * @param string
+     * @return string
+     */
+    public function createHash($string)
+    {
+        return md5($string . $this->getSecret());
     }
 }
