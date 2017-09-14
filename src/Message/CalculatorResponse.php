@@ -5,9 +5,9 @@ use Omnipay\Common\Message\AbstractResponse;
 use Omnipay\Common\Message\RedirectResponseInterface;
 
 /**
- * HomeCredit Purchase Response
+ * HomeCredit Calculator Response
  */
-class PurchaseResponse extends AbstractResponse implements RedirectResponseInterface
+class CalculatorResponse extends AbstractResponse implements RedirectResponseInterface
 {
     /**
      * Is the response successful?
