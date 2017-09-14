@@ -249,7 +249,7 @@ class PurchaseRequest extends AbstractRequest
      */
     public function getHash()
     {
-        return $this->createHash($this->getShop() . $this->getTransactionId() . $this->getAmount() . $this->getProductSet() .  $this->getCard()->getBillingFirstName() . $this->getCard()->getBillingLastName() . $this->getGName() . $this->getGProducer() . $this->getTimestamp());
+        return $this->createHash($this->getShop() . $this->getTransactionId() . $this->getAmount() . $this->getProductSet() .  $this->getCard()->getBillingFirstName() . ($this->getCard()->getBillingLastName() ?: 'surname') . $this->getGName() . $this->getGProducer() . $this->getTimestamp());
     }
 
     /**
@@ -285,7 +285,7 @@ class PurchaseRequest extends AbstractRequest
         }
 
         $data['c_name'] = $this->getCard()->getBillingFirstName();
-        $data['c_surname'] = $this->getCard()->getBillingLastName();
+        $data['c_surname'] = $this->getCard()->getBillingLastName() ?: 'surname';
         $data['c_mobile'] = $this->getCard()->getPhone();
         $data['c_email'] = $this->getCard()->getEmail();
 
