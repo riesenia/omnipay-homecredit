@@ -260,7 +260,7 @@ class PurchaseRequest extends AbstractRequest
     public function getTimestamp()
     {
         if (!$this->timestamp) {
-            $this->timestamp = gmdate('d.m.Y-H:i:s');
+            $this->timestamp = (new \DateTime(null, new \DateTimeZone('Europe/Bratislava')))->format('d.m.Y-H:i:s');
         }
 
         return $this->timestamp;
