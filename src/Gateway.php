@@ -253,6 +253,17 @@ class Gateway extends AbstractGateway
     }
 
     /**
+     * Create a prescoring request
+     *
+     * @param array $parameters
+     * @return \Omnipay\HomeCredit\Message\PrescoringRequest
+     */
+    public function prescoring(array $parameters = [])
+    {
+        return $this->createRequest('\Omnipay\HomeCredit\Message\PrescoringRequest', $parameters);
+    }
+
+    /**
      * Create a purchase request
      *
      * @param array $parameters
