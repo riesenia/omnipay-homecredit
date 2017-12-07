@@ -39,7 +39,7 @@ class CompletePurchaseRequest extends PurchaseRequest
      * @param string timestamp
      * @return string
      */
-    protected function getHash()
+    public function getHash()
     {
         return $this->createHash($this->httpRequest->query->get('hc_ret') . $this->httpRequest->query->get('hc_o_code'));
     }
