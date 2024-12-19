@@ -1,361 +1,300 @@
 <?php
+
+declare(strict_types=1);
+
 namespace Omnipay\HomeCredit\Message;
 
 use Omnipay\Common\Message\AbstractRequest;
+use Omnipay\HomeCredit\Item;
+use Omnipay\HomeCredit\ItemBag;
 
 /**
- * HomeCredit Purchase Request
+ * HomeCredit Purchase Request.
  */
 class PurchaseRequest extends AbstractRequest
 {
-    /**
-     * Endpoint type to build endpoint URL
-     *
-     * @var string
-     */
-    protected $endpointType = 'shop';
+    protected $_endpoints = [
+        'test' => 'https://apisk-test.homecredit.sk/verdun-train/financing/v1',
+        'prod' => 'https://api.homecredit.sk/financing/v1',
+        'testcz' => 'https://apicz-test.homecredit.cz/verdun-train/financing/v1',
+        'prodcz' => 'https://api.homecredit.cz/financing/v1'
+    ];
+
+    /** @var string[] */
+    protected array $_allowedDeliveryTypes = [
+        'DELIVERY_CARRIER',
+        'PERSONAL_BRANCH',
+        'PERSONAL_PARTNER',
+        'ONLINE'
+    ];
+
+    /** @var string */
+    protected string $_accessToken;
 
     /**
-     * Timestamp
+     * Set tax.
      *
-     * @var string
-     */
-    private $timestamp;
-
-    /**
-     * Setter
+     * @param float $value
      *
-     * @param string
-     * @return $this
+     * @return self
      */
-    public function setShop($value)
+    public function setTax(float $value): self
     {
-        return $this->setParameter('shop', $value);
+        return $this->setParameter('tax', $value);
     }
 
     /**
-     * Getter
+     * Get tax.
+     *
+     * @return float
+     */
+    public function getTax(): float
+    {
+        return $this->getParameter('tax');
+    }
+
+    /**
+     * Set tax rate.
+     *
+     * @param int $value
+     *
+     * @return self
+     */
+    public function setTaxRate(int $value): self
+    {
+        return $this->setParameter('taxRate', $value);
+    }
+
+    /**
+     * Get tax rate.
+     *
+     * @return int
+     */
+    public function getTaxRate(): int
+    {
+        return $this->getParameter('taxRate');
+    }
+
+    /**
+     * Set delivery type.
+     *
+     * @param string $value
+     *
+     * @return self
+     */
+    public function setDeliveryType(string $value): self
+    {
+        if (!\in_array($value, $this->_allowedDeliveryTypes)) {
+            throw new \InvalidArgumentException('Unknown delivery type');
+        }
+
+        return $this->setParameter('deliveryType', $value);
+    }
+
+    /**
+     * Get delivery type.
      *
      * @return string
      */
-    public function getShop()
+    public function getDeliveryType(): string
     {
-        return $this->getParameter('shop');
+        return $this->getParameter('deliveryType');
     }
 
     /**
-     * Setter
+     * Set locale.
      *
-     * @param string
-     * @return $this
-     */
-    public function setSecret($value)
-    {
-        return $this->setParameter('secret', $value);
-    }
-
-    /**
-     * Getter
+     * @param string $locale
      *
-     * @return string
+     * @return self
      */
-    public function getSecret()
+    public function setLocale(string $locale): self
     {
-        return $this->getParameter('secret');
+        if (!\in_array($locale, ['cs_CZ', 'sk_SK'])) {
+            throw new \InvalidArgumentException('Unsupported locale');
+        }
+
+        return $this->setParameter('locale', $locale);
     }
 
     /**
-     * Setter
-     *
-     * @param string
-     * @return $this
-     */
-    public function setProductSet($value)
-    {
-        return $this->setParameter('product_set', $value);
-    }
-
-    /**
-     * Getter
+     * Get locale.
      *
      * @return string
      */
-    public function getProductSet()
+    public function getLocale(): string
     {
-        return $this->getParameter('product_set');
+        return $this->getParameter('locale');
     }
 
     /**
-     * Setter
+     * Set test.
      *
-     * @param string
-     * @return $this
-     */
-    public function setGName($value)
-    {
-        return $this->setParameter('g_name', $value);
-    }
-
-    /**
-     * Getter
+     * @param bool $value
      *
-     * @return string
+     * @return self
      */
-    public function getGName()
-    {
-        return $this->getParameter('g_name');
-    }
-
-    /**
-     * Setter
-     *
-     * @param string
-     * @return $this
-     */
-    public function setGProducer($value)
-    {
-        return $this->setParameter('g_producer', $value);
-    }
-
-    /**
-     * Getter
-     *
-     * @return string
-     */
-    public function getGProducer()
-    {
-        return $this->getParameter('g_producer');
-    }
-
-    /**
-     * Setter
-     *
-     * @param string
-     * @return $this
-     */
-    public function setInsurance($value)
-    {
-        return $this->setParameter('insurance', $value);
-    }
-
-    /**
-     * Getter
-     *
-     * @return string
-     */
-    public function getInsurance()
-    {
-        return $this->getParameter('insurance');
-    }
-
-    /**
-     * Setter
-     *
-     * @param string
-     * @return $this
-     */
-    public function setInitialPayment($value)
-    {
-        return $this->setParameter('initial_payment', $value);
-    }
-
-    /**
-     * Getter
-     *
-     * @return string
-     */
-    public function getInitialPayment()
-    {
-        return $this->getParameter('initial_payment');
-    }
-
-    /**
-     * Setter
-     *
-     * @param string
-     * @return $this
-     */
-    public function setNumberPayments($value)
-    {
-        return $this->setParameter('number_payments', $value);
-    }
-
-    /**
-     * Getter
-     *
-     * @return string
-     */
-    public function getNumberPayments()
-    {
-        return $this->getParameter('number_payments');
-    }
-
-    /**
-     * Setter
-     *
-     * @param string
-     * @return $this
-     */
-    public function setLang($value)
-    {
-        return $this->setParameter('lang', $value);
-    }
-
-    /**
-     * Getter
-     *
-     * @return string
-     */
-    public function getLang()
-    {
-        return $this->getParameter('lang');
-    }
-
-    /**
-     * Setter
-     *
-     * @param string
-     * @return $this
-     */
-    public function setTest($value)
+    public function setTest(bool $value): self
     {
         return $this->setParameter('test', $value);
     }
 
     /**
-     * Getter
+     * Get test.
      *
-     * @return string
+     * @return bool
      */
-    public function getTest()
+    public function getTest(): bool
     {
         return $this->getParameter('test');
     }
 
     /**
-     * Validates and returns the formated amount
-     *
-     * @return string
+     * {@inheritdoc}
      */
-    public function getAmount()
+    public function setItems($items)
     {
-        return str_replace('.', ',', number_format(parent::getAmount(), 2, '.', ''));
-    }
-
-    /**
-     * Get hash for request
-     *
-     * @return string
-     */
-    public function getHash()
-    {
-        return $this->createHash($this->getShop() . $this->getTransactionId() . $this->getAmount() . $this->getProductSet() .  $this->getCard()->getBillingFirstName() . ($this->getCard()->getBillingLastName() ?: 'surname') . $this->getGName() . $this->getGProducer() . $this->getTimestamp());
-    }
-
-    /**
-     * Timestamp
-     *
-     * @return string
-     */
-    public function getTimestamp()
-    {
-        if (!$this->timestamp) {
-            $this->timestamp = (new \DateTime(null, new \DateTimeZone('Europe/Bratislava')))->format('d.m.Y-H:i:s');
+        if ($items && !$items instanceof ItemBag) {
+            $items = new ItemBag($items);
         }
 
-        return $this->timestamp;
+        return $this->setParameter('items', $items);
     }
 
     /**
-     * Get the raw data array for the message
+     * Get the raw data array for the message.
      *
      * @return mixed
      */
     public function getData()
     {
         $this->validate('amount', 'transactionId');
+        $card = $this->getCard();
 
-        $data = [];
-        $data['shop'] = $this->getShop();
-        $data['o_code'] = $this->getTransactionId();
-        $data['o_price'] = $this->getAmount();
+        $data = [
+            'customer' => [
+                'firstName' => $card->getFirstName(),
+                'lastName' => $card->getLastName(),
+                'email' => $card->getEmail(),
+                'phone' => $card->getPhone(),
+                'ipAddress' => $this->getClientIp(),
+                'addresses' => [
+                    [
+                        'name' => $card->getBillingName(),
+                        'streetAddress' => $card->getBillingAddress1(),
+                        'city' => $card->getBillingCity(),
+                        'zip' => $card->getBillingPostcode(),
+                        'addressType' => 'CONTACT'
+                    ]
+                ]
+            ],
+            'order' => [
+                'number' => $this->getTransactionId(),
+                'totalPrice' => [
+                    'amount' => \number_format((float) $this->getAmount(), 2, '.', '') * 100,
+                    'currency' => $this->getCurrency()
+                ],
+                'totalVat' => [
+                    'number' => $this->getTax() * 100,
+                    'currency' => $this->getCurrency(),
+                    'vatRate' => $this->getTaxRate()
+                ],
+                'addresses' => [
+                    [
+                        'name' => $card->getBillingName(),
+                        'city' => $card->getBillingCity(),
+                        'streetAddress' => $card->getBillingAddress1(),
+                        'zip' => $card->getBillingPostcode(),
+                        'addressType' => 'BILLING'
+                    ]
+                ],
+                'deliveryType' => $this->getDeliveryType(),
+                'items' => []
+            ],
+            'type' => 'INSTALLMENT',
+            'settingsInstallment' => [],
+            'merchantUrls' => []
+        ];
 
-        if ($this->getProductSet()) {
-            $data['product_set'] = $this->getProductSet();
-        }
+        /** @var Item $item */
+        foreach ($this->getItems() as $item) {
+            $unitPrice = $item->getPrice();
+            $quantity = $item->getQuantity();
 
-        $data['c_name'] = $this->getCard()->getBillingFirstName();
-        $data['c_surname'] = $this->getCard()->getBillingLastName() ?: 'surname';
-        $data['c_mobile'] = $this->getCard()->getPhone();
-        $data['c_email'] = $this->getCard()->getEmail();
-
-        $data['g_name'] = $this->getGName();
-        $data['g_producer'] = $this->getGProducer();
-
-        $data['time_request'] = $this->getTimestamp();
-        $data['ret_url'] = $this->getReturnUrl();
-        $data['sh'] = $this->getHash();
-
-        if ($this->getInsurance()) {
-            $data['insurance'] = $this->getInsurance();
-        }
-        if ($this->getInitialPayment()) {
-            $data['initial_payment'] = $this->getInitialPayment();
-        }
-        if ($this->getNumberPayments()) {
-            $data['number_payments'] = $this->getNumberPayments();
+            $data['items'][] = [
+                'code' => $item->getCode(),
+                'name' => $item->getName(),
+                'quantity' => $quantity,
+                'totalPrice' => [
+                    'amount' => ((float) \number_format($unitPrice * $quantity, 2, '.', '')) * 100,
+                    'currency' => $this->getCurrency()
+                ]
+            ];
         }
 
         return $data;
     }
 
     /**
-     * Send the request with specified data
+     * Send the request with specified data.
      *
      * @param mixed
+     * @param mixed $data
+     *
      * @return \Omnipay\Common\Message\ResponseInterface
      */
     public function sendData($data)
     {
-        return $this->response = new PurchaseResponse($this, $data);
+        $this->_authenticate();
+
+        try {
+            $response = $this->httpClient->request('POST', $this->getEndpoint() . '/applications', [
+                'Content-Type' => 'application/json',
+                'Authorization' => 'Bearer ' . $this->_accessToken
+            ], \json_encode($data));
+        } catch (\Exception $e) {
+            throw new \Exception('Application request failed. Reason: ' . $e->getMessage());
+        }
+
+        return $this->response = new PurchaseResponse($this, \json_decode($response->getBody()->getContents(), true));
     }
 
     /**
-     * Get endpoint
+     * Get endpoint.
      *
      * @return string
      */
     public function getEndpoint()
     {
-        return $this->getApplicationUrl() . '/i' . $this->endpointType . '/entry.do';
-    }
+        $isTest = $this->getParameter('test');
+        $endpoint = $this->_endpoints[$isTest ? 'test' : 'prod'];
 
-    /**
-     * Get endpoint
-     *
-     * @return string
-     */
-    public function getApplicationUrl()
-    {
-        if ($this->getLang() == 'sk') {
-            return $this->getTest() ? 'https://i-' . $this->endpointType . 'sk-train.homecredit.net' : 'https://i-' . $this->endpointType . 'sk.homecredit.net';
+        if ($this->getLocale() == 'cs_CZ') {
+            $endpoint = $this->_endpoints[$isTest ? 'testcz' : 'prodcz'];
         }
 
-        if ($this->getLang() == 'cz') {
-            return $this->getTest() ? 'https://i-' . $this->endpointType . '-train.homecredit.net' : 'https://i-' . $this->endpointType . '.homecredit.cz';
-        }
-
-        throw new \UnexpectedValueException('Unexpected language!');
+        return $endpoint;
     }
 
-    /**
-     * Create hash
-     *
-     * @param string
-     * @return string
-     */
-    public function createHash($string)
+    protected function _authenticate()
     {
-        return md5($string . $this->getSecret());
+        try {
+            $response = $this->httpClient->request('POST', \str_replace('/financing/v1', '/authentication/v1/partner', $this->getEndpoint()), [
+                'Content-Type' => 'application/json'
+            ], \json_encode([
+                'username' => $this->getParameter('username'),
+                'password' => $this->getParameter('password')
+            ]));
+
+            $data = \json_decode($response->getBody()->getContents(), true);
+        } catch (\Exception $e) {
+            throw new \Exception('Authentication failed. Reason: ' . $e->getMessage());
+        }
+
+        if (isset($data['errors'])) {
+            throw new \Exception('Authentication failed. Reason: ' . $data['errors'][0]['message']);
+        }
+
+        $this->_accessToken = $data['accessToken'];
     }
 }
