@@ -1,286 +1,175 @@
 <?php
+
+declare(strict_types=1);
+
 namespace Omnipay\HomeCredit;
 
 use Omnipay\Common\AbstractGateway;
+use Omnipay\HomeCredit\Message\CalculatorRequest;
+use Omnipay\HomeCredit\Message\CompletePurchaseRequest;
+use Omnipay\HomeCredit\Message\PrescoringRequest;
+use Omnipay\HomeCredit\Message\PurchaseRequest;
 
 /**
- * Homecredit Gateway
+ * Homecredit Gateway.
  */
 class Gateway extends AbstractGateway
 {
     /**
-     * Gateway name
+     * Gateway name.
      *
      * @return string
      */
-    public function getName()
+    public function getName(): string
     {
         return 'HomeCredit';
     }
 
     /**
-     * Get default parameters
+     * Get default parameters.
      *
      * @return array
      */
-    public function getDefaultParameters()
+    public function getDefaultParameters(): array
     {
         return [
-            'lang' => 'sk',
+            'locale' => 'sk_SK',
             'test' => true
         ];
     }
 
     /**
-     * Setter
+     * Setter.
      *
-     * @param string
-     * @return $this
+     * @param string $value
+     *
+     * @return self
      */
-    public function setShop($value)
+    public function setUsername(string $value): self
     {
-        return $this->setParameter('shop', $value);
+        return $this->setParameter('username', $value);
     }
 
     /**
-     * Getter
+     * Getter.
      *
      * @return string
      */
-    public function getShop()
+    public function getUsername(): string
     {
-        return $this->getParameter('shop');
+        return $this->getParameter('username');
     }
 
     /**
-     * Setter
+     * Setter.
      *
-     * @param string
-     * @return $this
-     */
-    public function setSecret($value)
-    {
-        return $this->setParameter('secret', $value);
-    }
-
-    /**
-     * Getter
+     * @param string $value
      *
-     * @return string
+     * @return self
      */
-    public function getSecret()
+    public function setPassword(string $value): self
     {
-        return $this->getParameter('secret');
+        return $this->setParameter('password', $value);
     }
 
     /**
-     * Setter
-     *
-     * @param string
-     * @return $this
-     */
-    public function setProductSet($value)
-    {
-        return $this->setParameter('product_set', $value);
-    }
-
-    /**
-     * Getter
+     * Getter.
      *
      * @return string
      */
-    public function getProductSet()
+    public function getPassword(): string
     {
-        return $this->getParameter('product_set');
+        return $this->getParameter('password');
     }
 
     /**
-     * Setter
+     * Setter.
      *
-     * @param string
-     * @return $this
-     */
-    public function setGName($value)
-    {
-        return $this->setParameter('g_name', $value);
-    }
-
-    /**
-     * Getter
+     * @param string $value
      *
-     * @return string
+     * @return self
      */
-    public function getGName()
+    public function setLocale(string $value): self
     {
-        return $this->getParameter('g_name');
+        return $this->setParameter('locale', $value);
     }
 
     /**
-     * Setter
-     *
-     * @param string
-     * @return $this
-     */
-    public function setGProducer($value)
-    {
-        return $this->setParameter('g_producer', $value);
-    }
-
-    /**
-     * Getter
+     * Getter.
      *
      * @return string
      */
-    public function getGProducer()
+    public function getLocale(): string
     {
-        return $this->getParameter('g_producer');
+        return $this->getParameter('locale');
     }
 
     /**
-     * Setter
+     * Setter.
      *
-     * @param string
-     * @return $this
-     */
-    public function setInsurance($value)
-    {
-        return $this->setParameter('insurance', $value);
-    }
-
-    /**
-     * Getter
+     * @param self $value
      *
-     * @return string
+     * @return self
      */
-    public function getInsurance()
-    {
-        return $this->getParameter('insurance');
-    }
-
-    /**
-     * Setter
-     *
-     * @param string
-     * @return $this
-     */
-    public function setInitialPayment($value)
-    {
-        return $this->setParameter('initial_payment', $value);
-    }
-
-    /**
-     * Getter
-     *
-     * @return string
-     */
-    public function getInitialPayment()
-    {
-        return $this->getParameter('initial_payment');
-    }
-
-    /**
-     * Setter
-     *
-     * @param string
-     * @return $this
-     */
-    public function setNumberPayments($value)
-    {
-        return $this->setParameter('number_payments', $value);
-    }
-
-    /**
-     * Getter
-     *
-     * @return string
-     */
-    public function getNumberPayments()
-    {
-        return $this->getParameter('number_payments');
-    }
-
-    /**
-     * Setter
-     *
-     * @param string
-     * @return $this
-     */
-    public function setLang($value)
-    {
-        return $this->setParameter('lang', $value);
-    }
-
-    /**
-     * Getter
-     *
-     * @return string
-     */
-    public function getLang()
-    {
-        return $this->getParameter('lang');
-    }
-
-    /**
-     * Setter
-     *
-     * @param string
-     * @return $this
-     */
-    public function setTest($value)
+    public function setTest($value): self
     {
         return $this->setParameter('test', $value);
     }
 
     /**
-     * Getter
+     * Getter.
      *
-     * @return string
+     * @return bool
      */
-    public function getTest()
+    public function getTest(): bool
     {
         return $this->getParameter('test');
     }
 
     /**
-     * Create a calculator request
+     * Create a calculator request.
      *
      * @param array $parameters
-     * @return \Omnipay\HomeCredit\Message\CalculatorRequest
+     *
+     * @return CalculatorRequest
      */
-    public function calculator(array $parameters = [])
+    public function calculator(array $parameters = []): CalculatorRequest
     {
         return $this->createRequest('\Omnipay\HomeCredit\Message\CalculatorRequest', $parameters);
     }
 
     /**
-     * Create a prescoring request
+     * Create a prescoring request.
      *
      * @param array $parameters
-     * @return \Omnipay\HomeCredit\Message\PrescoringRequest
+     *
+     * @return PrescoringRequest
      */
-    public function prescoring(array $parameters = [])
+    public function prescoring(array $parameters = []): PrescoringRequest
     {
         return $this->createRequest('\Omnipay\HomeCredit\Message\PrescoringRequest', $parameters);
     }
 
     /**
-     * Create a purchase request
+     * Create a purchase request.
      *
      * @param array $parameters
-     * @return \Omnipay\HomeCredit\Message\PurchaseRequest
+     *
+     * @return PurchaseRequest
      */
-    public function purchase(array $parameters = [])
+    public function purchase(array $parameters = []): PurchaseRequest
     {
         return $this->createRequest('\Omnipay\HomeCredit\Message\PurchaseRequest', $parameters);
     }
 
     /**
-     * Create a complete purchase request
+     * Create a complete purchase request.
      *
      * @param array $parameters
-     * @return \Omnipay\HomeCredit\Message\CompletePurchaseRequest
+     *
+     * @return CompletePurchaseRequest
      */
-    public function completePurchase(array $parameters = [])
+    public function completePurchase(array $parameters = []): CompletePurchaseRequest
     {
         return $this->createRequest('\Omnipay\HomeCredit\Message\CompletePurchaseRequest', $parameters);
     }

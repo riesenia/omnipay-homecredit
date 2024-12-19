@@ -1,56 +1,45 @@
 <?php
+
+declare(strict_types=1);
+
 namespace Omnipay\HomeCredit\Message;
 
-use Omnipay\Common\Exception\InvalidResponseException;
-
 /**
- * HomeCredit CompletePurchase Request
+ * HomeCredit CompletePurchase Request.
  */
 class CompletePurchaseRequest extends PurchaseRequest
 {
     /**
-     * Get the raw data array for the message
+     * Get the raw data array for the message.
      *
      * @return mixed
      */
     public function getData()
     {
-        if ($this->getHash() != $this->getBankHash()) {
-            throw new InvalidResponseException('Odpoveď z Home Credit sa nepodarilo overiť. Prosím kontaktujte nás.');
-        }
-
         return $this->httpRequest->query->all();
     }
 
     /**
-     * Send the request with specified data
+     * Send the request with specified data.
      *
      * @param mixed
+     * @param mixed $data
+     *
      * @return \Omnipay\Common\Message\ResponseInterface
      */
     public function sendData($data)
     {
-        return $this->response = new CompletePurchaseResponse($this, $data);
-    }
+        $this->_authenticate();
 
-    /**
-     * Get hash for response
-     *
-     * @param string timestamp
-     * @return string
-     */
-    public function getHash()
-    {
-        return $this->createHash($this->httpRequest->query->get('hc_ret') . $this->httpRequest->query->get('hc_o_code'));
-    }
+        try {
+            $response = $this->httpClient->request('POST', $this->getEndpoint() . '/applications/' . $this->getData()['applicationId'], [
+                'Content-Type' => 'application/json',
+                'Authorization' => 'Bearer ' . $this->_accessToken
+            ]);
+        } catch (\Exception $e) {
+            throw new \Exception('Application detail request failed. Reason: ' . $e->getMessage());
+        }
 
-    /**
-     * Get hash from bank response
-     *
-     * @return string
-     */
-    protected function getBankHash()
-    {
-        return $this->httpRequest->query->get('hc_sh');
+        return $this->response = new CompletePurchaseResponse($this, \json_decode($response->getBody()->getContents(), true));
     }
 }
