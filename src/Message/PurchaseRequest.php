@@ -32,6 +32,30 @@ class PurchaseRequest extends AbstractRequest
     protected string $_accessToken;
 
     /**
+     * Set username.
+     *
+     * @param string $value
+     *
+     * @return self
+     */
+    public function setUsername(string $value): self
+    {
+        return $this->setParameter('username', $value);
+    }
+
+    /**
+     * Set password.
+     *
+     * @param string $value
+     *
+     * @return self
+     */
+    public function setPassword(string $value): self
+    {
+        return $this->setParameter('password', $value);
+    }
+
+    /**
      * Set tax.
      *
      * @param float $value
@@ -248,7 +272,7 @@ class PurchaseRequest extends AbstractRequest
         $this->_authenticate();
 
         try {
-            $response = $this->httpClient->request('POST', $this->getEndpoint() . '/applications', [
+            $response = $this->httpClient->post($this->getEndpoint() . '/applications', [
                 'Content-Type' => 'application/json',
                 'Authorization' => 'Bearer ' . $this->_accessToken
             ], \json_encode($data));
@@ -256,7 +280,8 @@ class PurchaseRequest extends AbstractRequest
             throw new \Exception('Application request failed. Reason: ' . $e->getMessage());
         }
 
-        return $this->response = new PurchaseResponse($this, \json_decode($response->getBody()->getContents(), true));
+        $responseData = $response->getBody()->read($response->getBody()->getContentLength());
+        return $this->response = new PurchaseResponse($this, \json_decode($responseData, true));
     }
 
     /**
@@ -279,18 +304,18 @@ class PurchaseRequest extends AbstractRequest
     protected function _authenticate()
     {
         try {
-            $response = $this->httpClient->request('POST', \str_replace('/financing/v1', '/authentication/v1/partner', $this->getEndpoint()), [
+            $response = $this->httpClient->post(\str_replace('/financing/v1', '/authentication/v1/partner', $this->getEndpoint()), [
                 'Content-Type' => 'application/json'
             ], \json_encode([
                 'username' => $this->getParameter('username'),
                 'password' => $this->getParameter('password')
-            ]));
+            ]))->send();
 
-            $data = \json_decode($response->getBody()->getContents(), true);
+            $data = \json_decode($response->getBody()->read($response->getBody()->getContentLength()), true);
         } catch (\Exception $e) {
             throw new \Exception('Authentication failed. Reason: ' . $e->getMessage());
         }
-
+        
         if (isset($data['errors'])) {
             throw new \Exception('Authentication failed. Reason: ' . $data['errors'][0]['message']);
         }

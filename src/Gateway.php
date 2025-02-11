@@ -5,9 +5,7 @@ declare(strict_types=1);
 namespace Omnipay\HomeCredit;
 
 use Omnipay\Common\AbstractGateway;
-use Omnipay\HomeCredit\Message\CalculatorRequest;
 use Omnipay\HomeCredit\Message\CompletePurchaseRequest;
-use Omnipay\HomeCredit\Message\PrescoringRequest;
 use Omnipay\HomeCredit\Message\PurchaseRequest;
 
 /**
@@ -124,30 +122,6 @@ class Gateway extends AbstractGateway
     public function getTest(): bool
     {
         return $this->getParameter('test');
-    }
-
-    /**
-     * Create a calculator request.
-     *
-     * @param array $parameters
-     *
-     * @return CalculatorRequest
-     */
-    public function calculator(array $parameters = []): CalculatorRequest
-    {
-        return $this->createRequest('\Omnipay\HomeCredit\Message\CalculatorRequest', $parameters);
-    }
-
-    /**
-     * Create a prescoring request.
-     *
-     * @param array $parameters
-     *
-     * @return PrescoringRequest
-     */
-    public function prescoring(array $parameters = []): PrescoringRequest
-    {
-        return $this->createRequest('\Omnipay\HomeCredit\Message\PrescoringRequest', $parameters);
     }
 
     /**

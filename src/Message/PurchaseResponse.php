@@ -43,6 +43,14 @@ class PurchaseResponse extends AbstractResponse implements RedirectResponseInter
     }
 
     /**
+     * {@inheritdoc}
+     */
+    public function getRedirectData()
+    {
+        return [];
+    }
+
+    /**
      * Get the required redirect method (either GET or POST).
      *
      * @return string
