@@ -32,6 +32,50 @@ class PurchaseRequest extends AbstractRequest
     protected string $_accessToken;
 
     /**
+     * Setter.
+     *
+     * @param string $value
+     *
+     * @return self
+     */
+    public function setUsername(string $value): self
+    {
+        return $this->setParameter('username', $value);
+    }
+
+    /**
+     * Getter.
+     *
+     * @return string
+     */
+    public function getUsername(): string
+    {
+        return $this->getParameter('username');
+    }
+
+    /**
+     * Setter.
+     *
+     * @param string $value
+     *
+     * @return self
+     */
+    public function setPassword(string $value): self
+    {
+        return $this->setParameter('password', $value);
+    }
+
+    /**
+     * Getter.
+     *
+     * @return string
+     */
+    public function getPassword(): string
+    {
+        return $this->getParameter('password');
+    }
+
+    /**
      * Set tax.
      *
      * @param float $value
@@ -99,6 +143,28 @@ class PurchaseRequest extends AbstractRequest
     public function getDeliveryType(): string
     {
         return $this->getParameter('deliveryType');
+    }
+
+    /**
+     * Set product code.
+     *
+     * @param string $value
+     *
+     * @return self
+     */
+    public function setProductCode(string $value): self
+    {
+        return $this->setParameter('productCode', $value);
+    }
+
+    /**
+     * Get product code.
+     *
+     * @return string
+     */
+    public function getProductCode(): string
+    {
+        return $this->getParameter('productCode');
     }
 
     /**
@@ -212,8 +278,14 @@ class PurchaseRequest extends AbstractRequest
                 'items' => []
             ],
             'type' => 'INSTALLMENT',
-            'settingsInstallment' => [],
-            'merchantUrls' => []
+            'settingsInstallment' => [
+                'productCode' => $this->getProductCode(),
+            ],
+            'merchantUrls' => [
+                'approvedRedirect' => $this->getReturnUrl(),
+                'rejectedRedirect' => $this->getReturnUrl(),
+                'notificationEndpoint' => $this->getNotifyUrl()
+            ]
         ];
 
         /** @var Item $item */
@@ -221,7 +293,7 @@ class PurchaseRequest extends AbstractRequest
             $unitPrice = $item->getPrice();
             $quantity = $item->getQuantity();
 
-            $data['items'][] = [
+            $data['order']['items'][] = [
                 'code' => $item->getCode(),
                 'name' => $item->getName(),
                 'quantity' => $quantity,
@@ -248,15 +320,17 @@ class PurchaseRequest extends AbstractRequest
         $this->_authenticate();
 
         try {
-            $response = $this->httpClient->request('POST', $this->getEndpoint() . '/applications', [
+            $request = $this->httpClient->post($this->getEndpoint() . '/applications', [
                 'Content-Type' => 'application/json',
                 'Authorization' => 'Bearer ' . $this->_accessToken
             ], \json_encode($data));
+            $response = $request->send();
+            $responseData = $response->json();
         } catch (\Exception $e) {
             throw new \Exception('Application request failed. Reason: ' . $e->getMessage());
         }
 
-        return $this->response = new PurchaseResponse($this, \json_decode($response->getBody()->getContents(), true));
+        return $this->response = new PurchaseResponse($this, $responseData);
     }
 
     /**
@@ -279,22 +353,22 @@ class PurchaseRequest extends AbstractRequest
     protected function _authenticate()
     {
         try {
-            $response = $this->httpClient->request('POST', \str_replace('/financing/v1', '/authentication/v1/partner', $this->getEndpoint()), [
+            $request = $this->httpClient->post(\str_replace('/financing/v1', '/authentication/v1/partner', $this->getEndpoint()), [
                 'Content-Type' => 'application/json'
             ], \json_encode([
                 'username' => $this->getParameter('username'),
                 'password' => $this->getParameter('password')
             ]));
-
-            $data = \json_decode($response->getBody()->getContents(), true);
+            $response = $request->send();
+            $responseData = $response->json();
         } catch (\Exception $e) {
             throw new \Exception('Authentication failed. Reason: ' . $e->getMessage());
         }
 
-        if (isset($data['errors'])) {
-            throw new \Exception('Authentication failed. Reason: ' . $data['errors'][0]['message']);
+        if (isset($responseData['errors'])) {
+            throw new \Exception('Authentication failed. Reason: ' . $responseData['errors'][0]['message']);
         }
 
-        $this->_accessToken = $data['accessToken'];
+        $this->_accessToken = $responseData['accessToken'];
     }
 }

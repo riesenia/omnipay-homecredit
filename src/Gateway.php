@@ -83,6 +83,28 @@ class Gateway extends AbstractGateway
     }
 
     /**
+     * Set product code.
+     *
+     * @param string $value
+     *
+     * @return self
+     */
+    public function setProductCode(string $value): self
+    {
+        return $this->setParameter('productCode', $value);
+    }
+
+    /**
+     * Get product code.
+     *
+     * @return string
+     */
+    public function getProductCode(): string
+    {
+        return $this->getParameter('productCode');
+    }
+
+    /**
      * Setter.
      *
      * @param string $value
