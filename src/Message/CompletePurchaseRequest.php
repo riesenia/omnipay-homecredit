@@ -32,16 +32,16 @@ class CompletePurchaseRequest extends PurchaseRequest
         $this->_authenticate();
 
         try {
-            $response = $this->httpClient->post($this->getEndpoint() . '/applications/' . $this->getData()['applicationId'], [
+            $request = $this->httpClient->post($this->getEndpoint() . '/applications/' . $this->getData()['applicationId'], [
                 'Content-Type' => 'application/json',
                 'Authorization' => 'Bearer ' . $this->_accessToken
             ]);
+            $response = $request->send();
+            $responseData = $response->json();
         } catch (\Exception $e) {
             throw new \Exception('Application detail request failed. Reason: ' . $e->getMessage());
         }
 
-        $responseData = $response->getBody()->read($response->getBody()->getContentLength());
-
-        return $this->response = new CompletePurchaseResponse($this, \json_decode($responseData, true));
+        return $this->response = new CompletePurchaseResponse($this, $responseData);
     }
 }

@@ -5,7 +5,9 @@ declare(strict_types=1);
 namespace Omnipay\HomeCredit;
 
 use Omnipay\Common\AbstractGateway;
+use Omnipay\HomeCredit\Message\CalculatorRequest;
 use Omnipay\HomeCredit\Message\CompletePurchaseRequest;
+use Omnipay\HomeCredit\Message\PrescoringRequest;
 use Omnipay\HomeCredit\Message\PurchaseRequest;
 
 /**
@@ -81,6 +83,28 @@ class Gateway extends AbstractGateway
     }
 
     /**
+     * Set product code.
+     *
+     * @param string $value
+     *
+     * @return self
+     */
+    public function setProductCode(string $value): self
+    {
+        return $this->setParameter('productCode', $value);
+    }
+
+    /**
+     * Get product code.
+     *
+     * @return string
+     */
+    public function getProductCode(): string
+    {
+        return $this->getParameter('productCode');
+    }
+
+    /**
      * Setter.
      *
      * @param string $value
@@ -122,6 +146,30 @@ class Gateway extends AbstractGateway
     public function getTest(): bool
     {
         return $this->getParameter('test');
+    }
+
+    /**
+     * Create a calculator request.
+     *
+     * @param array $parameters
+     *
+     * @return CalculatorRequest
+     */
+    public function calculator(array $parameters = []): CalculatorRequest
+    {
+        return $this->createRequest('\Omnipay\HomeCredit\Message\CalculatorRequest', $parameters);
+    }
+
+    /**
+     * Create a prescoring request.
+     *
+     * @param array $parameters
+     *
+     * @return PrescoringRequest
+     */
+    public function prescoring(array $parameters = []): PrescoringRequest
+    {
+        return $this->createRequest('\Omnipay\HomeCredit\Message\PrescoringRequest', $parameters);
     }
 
     /**
