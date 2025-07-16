@@ -257,11 +257,11 @@ class PurchaseRequest extends AbstractRequest
             'order' => [
                 'number' => $this->getTransactionId(),
                 'totalPrice' => [
-                    'amount' => \number_format((float) $this->getAmount(), 2, '.', '') * 100,
+                    'amount' => \round(\number_format((float) $this->getAmount(), 2, '.', '') * 100),
                     'currency' => $this->getCurrency()
                 ],
                 'totalVat' => [
-                    'number' => $this->getTax() * 100,
+                    'number' => \round($this->getTax() * 100),
                     'currency' => $this->getCurrency(),
                     'vatRate' => $this->getTaxRate()
                 ],
