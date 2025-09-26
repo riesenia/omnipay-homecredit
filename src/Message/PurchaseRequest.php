@@ -298,7 +298,7 @@ class PurchaseRequest extends AbstractRequest
                 'name' => $item->getName(),
                 'quantity' => $quantity,
                 'totalPrice' => [
-                    'amount' => ((float) \number_format($unitPrice * $quantity, 2, '.', '')) * 100,
+                    'amount' => \round(((float) \number_format($unitPrice * $quantity, 2, '.', '')) * 100),
                     'currency' => $this->getCurrency()
                 ]
             ];
